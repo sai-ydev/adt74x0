@@ -26,7 +26,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define ADT7410_ADDR (0x48 << 1)
+#define ADT7410_CHIP_ID 0xCB
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -73,6 +74,8 @@ int __io_putchar(int ch) {
  */
 int main(void) {
 	/* USER CODE BEGIN 1 */
+	uint8_t chip_id[1];
+	HAL_StatusTypeDef result;
 
 	/* USER CODE END 1 */
 
@@ -102,26 +105,28 @@ int main(void) {
 	printf("\r\n");
 
 	printf("Scanning I2C bus:\r\n");
-	HAL_StatusTypeDef result;
-	uint8_t i;
-	for (i = 1; i < 128; i++) {
-		/*
-		 * the HAL wants a left aligned i2c address
-		 * &hi2c1 is the handle
-		 * (uint16_t)(i<<1) is the i2c address left aligned
-		 * retries 2
-		 * timeout 2
-		 */
-		result = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t) (i << 1), 2, 2);
-		if (result != HAL_OK) // HAL_ERROR or HAL_BUSY or HAL_TIMEOUT
-				{
-			printf("."); // No ACK received at that address
-		}
-		if (result == HAL_OK) {
-			printf("0x%X", i); // Received an ACK at that address
-		}
+
+	result = HAL_I2C_IsDeviceReady(&hi2c1, ADT7410_ADDR, 2, HAL_MAX_DELAY);
+
+	if(result != HAL_OK){
+		printf("No temperature sensor detected\r\n");
+		while(1);
 	}
-	printf("\r\n");
+
+	result = HAL_I2C_Mem_Read(&hi2c1, ADT7410_ADDR, 0x0B, 1, chip_id, 1,
+			HAL_MAX_DELAY);
+
+	if(result == HAL_OK){
+		if(chip_id[0] != 0xCB){
+			printf("Incorrect chip id\r\n");
+			while(1);
+		}
+	} else{
+		printf("Chip read failed\r\n");
+		while(1);
+	}
+
+
 
 	/* USER CODE END 2 */
 
@@ -206,14 +211,14 @@ static void MX_DFSDM1_Init(void) {
 	hdfsdm1_channel1.Instance = DFSDM1_Channel1;
 	hdfsdm1_channel1.Init.OutputClock.Activation = ENABLE;
 	hdfsdm1_channel1.Init.OutputClock.Selection =
-			DFSDM_CHANNEL_OUTPUT_CLOCK_SYSTEM;
+	DFSDM_CHANNEL_OUTPUT_CLOCK_SYSTEM;
 	hdfsdm1_channel1.Init.OutputClock.Divider = 2;
 	hdfsdm1_channel1.Init.Input.Multiplexer = DFSDM_CHANNEL_EXTERNAL_INPUTS;
 	hdfsdm1_channel1.Init.Input.DataPacking = DFSDM_CHANNEL_STANDARD_MODE;
 	hdfsdm1_channel1.Init.Input.Pins = DFSDM_CHANNEL_FOLLOWING_CHANNEL_PINS;
 	hdfsdm1_channel1.Init.SerialInterface.Type = DFSDM_CHANNEL_SPI_RISING;
 	hdfsdm1_channel1.Init.SerialInterface.SpiClock =
-			DFSDM_CHANNEL_SPI_CLOCK_INTERNAL;
+	DFSDM_CHANNEL_SPI_CLOCK_INTERNAL;
 	hdfsdm1_channel1.Init.Awd.FilterOrder = DFSDM_CHANNEL_FASTSINC_ORDER;
 	hdfsdm1_channel1.Init.Awd.Oversampling = 1;
 	hdfsdm1_channel1.Init.Offset = 0;
@@ -320,7 +325,7 @@ static void MX_GPIO_Init(void) {
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOE,
-			M24SR64_Y_RF_DISABLE_Pin | M24SR64_Y_GPO_Pin | ISM43362_RST_Pin,
+	M24SR64_Y_RF_DISABLE_Pin | M24SR64_Y_GPO_Pin | ISM43362_RST_Pin,
 			GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
@@ -334,7 +339,7 @@ static void MX_GPIO_Init(void) {
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOD,
-			USB_OTG_FS_PWR_EN_Pin | PMOD_RESET_Pin | STSAFE_A100_RESET_Pin,
+	USB_OTG_FS_PWR_EN_Pin | PMOD_RESET_Pin | STSAFE_A100_RESET_Pin,
 			GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
