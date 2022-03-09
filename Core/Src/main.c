@@ -75,6 +75,10 @@ int __io_putchar(int ch) {
 int main(void) {
 	/* USER CODE BEGIN 1 */
 	uint8_t chip_id[1];
+	uint8_t temp_data[2];
+	uint8_t reset_cmd[1] = { 0x2F };
+	long temp_raw;
+	float tempC;
 	HAL_StatusTypeDef result;
 
 	/* USER CODE END 1 */
@@ -106,27 +110,33 @@ int main(void) {
 
 	printf("Scanning I2C bus:\r\n");
 
+	result = HAL_I2C_Master_Transmit(&hi2c1, ADT7410_ADDR, reset_cmd, 1,
+			HAL_MAX_DELAY);
+
+	HAL_Delay(10);
+
 	result = HAL_I2C_IsDeviceReady(&hi2c1, ADT7410_ADDR, 2, HAL_MAX_DELAY);
 
-	if(result != HAL_OK){
+	if (result != HAL_OK) {
 		printf("No temperature sensor detected\r\n");
-		while(1);
+		while (1)
+			;
 	}
 
 	result = HAL_I2C_Mem_Read(&hi2c1, ADT7410_ADDR, 0x0B, 1, chip_id, 1,
-			HAL_MAX_DELAY);
+	HAL_MAX_DELAY);
 
-	if(result == HAL_OK){
-		if(chip_id[0] != 0xCB){
+	if (result == HAL_OK) {
+		if (chip_id[0] != 0xCB) {
 			printf("Incorrect chip id\r\n");
-			while(1);
+			while (1)
+				;
 		}
-	} else{
+	} else {
 		printf("Chip read failed\r\n");
-		while(1);
+		while (1)
+			;
 	}
-
-
 
 	/* USER CODE END 2 */
 
@@ -136,6 +146,15 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
+		result = HAL_I2C_Master_Receive(&hi2c1, ADT7410_ADDR, temp_data, 2,
+				HAL_MAX_DELAY);
+
+		if (result == HAL_OK) {
+			temp_raw = ((temp_data[0] << 8) + temp_data[1]) >> 3;
+			tempC = (float) temp_raw / 16;
+			printf("Temperature = %fC\r\n", tempC);
+		}
+		HAL_Delay(1000);
 	}
 	/* USER CODE END 3 */
 }
