@@ -78,7 +78,6 @@ int main(void)
   /* USER CODE BEGIN 1 */
 	uint8_t chip_id[1];
 	uint8_t temp_data[2];
-	uint8_t reset_cmd[1] = {SOFTWARE_RESET};
 	long temp_raw;
 	float tempC;
 	HAL_StatusTypeDef result;
@@ -112,10 +111,7 @@ int main(void)
 
 	printf("Scanning I2C bus:\r\n");
 
-	result = HAL_I2C_Master_Transmit(&hi2c1, ADT74x0_ADDRESS, reset_cmd, 1,
-			HAL_MAX_DELAY);
-
-	HAL_Delay(10);
+	adt74x0_reset(&hi2c1);
 
 	result = HAL_I2C_IsDeviceReady(&hi2c1, ADT74x0_ADDRESS, 2, HAL_MAX_DELAY);
 
