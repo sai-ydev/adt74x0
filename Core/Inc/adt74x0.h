@@ -71,7 +71,7 @@ extern uint8_t ui8config;
 
 void adt74x0_init(void);
 uint16_t adt74x0_read_temp(void);
-uint16_t adt74x0_read_one_reg(uint8_t reg_address);
+uint8_t adt74x0_read_one_reg(I2C_HandleTypeDef *hi2c, uint8_t reg_address);
 uint16_t adt74x0_read_two_reg(uint8_t reg_address);
 void adt74x0_write_one_reg(uint8_t reg_address, uint8_t data);
 void adt74x0_write_two_reg(uint8_t reg_address, uint8_t data1, uint8_t data2);
