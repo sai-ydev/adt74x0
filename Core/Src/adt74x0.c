@@ -8,7 +8,7 @@
 
 uint8_t ui8configAdt7420 = (FAULT_TRIGGER_4 | CT_PIN_POLARITY | INT_PIN_POLARITY | INT_CT_MODE |CONTINUOUS_CONVERSION_MODE | RESOLUTION_13_BITS);
 
-uint8_t adt74x0_read_one_reg(I2C_HandleTypeDef *hi2c, uint8_t reg_address){
+uint8_t adt74x0_read_reg(I2C_HandleTypeDef *hi2c, uint8_t reg_address){
 
 	uint8_t reg_data;
 
@@ -17,8 +17,12 @@ uint8_t adt74x0_read_one_reg(I2C_HandleTypeDef *hi2c, uint8_t reg_address){
 	return reg_data;
 }
 
-void adt74x0_reset(I2C_HandleTypeDef *hi2c){
+HAL_StatusTypeDef adt74x0_reset(I2C_HandleTypeDef *hi2c){
+
 	uint8_t reset_cmd[1] = {SOFTWARE_RESET};
-	HAL_I2C_Master_Transmit(hi2c, ADT74x0_ADDRESS, reset_cmd, 1, HAL_MAX_DELAY);
-	HAL_Delay(10);
+
+	HAL_StatusTypeDef rslt = HAL_I2C_Master_Transmit(hi2c, ADT74x0_ADDRESS, reset_cmd, 1, HAL_MAX_DELAY);
+	HAL_Delay(1);
+
+	return rslt;
 }
