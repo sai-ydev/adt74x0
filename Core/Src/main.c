@@ -117,6 +117,10 @@ int main(void) {
 		Error_Handler();
 	}
 
+	if(chip_id != CHIP_ID){
+		Error_Handler();
+	}
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */

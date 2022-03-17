@@ -53,8 +53,7 @@ HAL_StatusTypeDef adt74x0_read_temp(I2C_HandleTypeDef *i2c, float *temp){
 
 HAL_StatusTypeDef adt74x0_read_chip_id(I2C_HandleTypeDef *i2c, uint8_t *chip_id) {
 
-	uint8_t result = HAL_I2C_Master_Transmit(i2c, ADT74x0_ADDRESS, chip_id, 1,
-			HAL_MAX_DELAY);
+	uint8_t result = HAL_I2C_Mem_Read(i2c, ADT74x0_ADDRESS, ID_REG, 1, chip_id, 1, HAL_MAX_DELAY);
 
 	return result;
 }
