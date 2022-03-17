@@ -76,8 +76,6 @@ int __io_putchar(int ch) {
 int main(void) {
 	/* USER CODE BEGIN 1 */
 	uint8_t chip_id;
-	uint8_t temp_data[2];
-	long temp_raw;
 	float tempC;
 	HAL_StatusTypeDef result;
 
@@ -127,13 +125,9 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		result = HAL_I2C_Master_Receive(&hi2c1, ADT74x0_ADDRESS, temp_data, 2,
-		HAL_MAX_DELAY);
-
-		if (result == HAL_OK) {
-			temp_raw = ((temp_data[0] << 8) + temp_data[1]) >> 3;
-			tempC = (float) temp_raw / 16;
-			printf("Temperature = %fC\r\n", tempC);
+		result = adt74x0_read_temp(&hi2c1, &tempC);
+		if(result == HAL_OK){
+			printf("Temperature = %3.2fC\r\n", tempC);
 		}
 		HAL_Delay(1000);
 	}

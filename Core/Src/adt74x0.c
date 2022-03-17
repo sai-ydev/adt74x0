@@ -38,6 +38,19 @@ HAL_StatusTypeDef adt74x0_init(I2C_HandleTypeDef *hi2c) {
 	return rslt;
 }
 
+HAL_StatusTypeDef adt74x0_read_temp(I2C_HandleTypeDef *i2c, float *temp){
+	uint8_t data[2];
+	uint8_t result;
+	uint16_t temp_hex;
+
+	result = HAL_I2C_Mem_Read(i2c, ADT74x0_ADDRESS, TMP_MSB_REG, 1, data, 2, HAL_MAX_DELAY);
+	temp_hex= (data[0] << 8) + data[1];
+
+	*temp = adt74x0_convert_hex_to_degrees(temp_hex);
+
+	return result;
+}
+
 HAL_StatusTypeDef adt74x0_read_chip_id(I2C_HandleTypeDef *i2c, uint8_t *chip_id) {
 
 	uint8_t result = HAL_I2C_Master_Transmit(i2c, ADT74x0_ADDRESS, chip_id, 1,

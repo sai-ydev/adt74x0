@@ -70,7 +70,7 @@ HAL_StatusTypeDef adt74x0_init(I2C_HandleTypeDef *i2c);
 HAL_StatusTypeDef adt74x0_read_chip_id(I2C_HandleTypeDef *i2c, uint8_t *chip_id);
 HAL_StatusTypeDef adt74x0_write_temp_reg(I2C_HandleTypeDef *i2c,
 		uint8_t temp_reg, int16_t degrees, uint8_t num_bytes);
-uint16_t adt74x0_read_temp(void);
+HAL_StatusTypeDef adt74x0_read_temp(I2C_HandleTypeDef *i2c, float *temp);
 uint16_t adt74x0_convert_degrees_to_hex(int16_t i16degrees);
 float adt74x0_convert_hex_to_degrees(uint16_t ui16tempResults);
 void adt74x0_power_down(void);
