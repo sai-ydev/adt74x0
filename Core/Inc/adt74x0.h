@@ -6,15 +6,12 @@
  *
  */
 
-
-
 #ifndef ADT74x0_H_
 #define ADT74x0_H_
 
 #include "stm32l4xx_hal.h"
 
 /** definitions **/
-
 
 /* ADT7420 register addresses */
 #define TMP_MSB_REG 				0x00
@@ -67,14 +64,15 @@
 
 extern uint8_t ui8config;
 
-
 /************** Function Declarations ***********/
 
 HAL_StatusTypeDef adt74x0_init(I2C_HandleTypeDef *i2c);
 HAL_StatusTypeDef adt74x0_read_chip_id(I2C_HandleTypeDef *i2c, uint8_t *chip_id);
+HAL_StatusTypeDef adt74x0_write_temp_reg(I2C_HandleTypeDef *i2c,
+		uint8_t temp_reg, int16_t degrees, uint8_t num_bytes);
 uint16_t adt74x0_read_temp(void);
-uint16_t adt74x0_convert_degress_to_hex(int16_t degrees);
-float adt74x0_convert_hex_to_degrees(uint16_t temp_data);
+uint16_t adt74x0_convert_degrees_to_hex(int16_t i16degrees);
+float adt74x0_convert_hex_to_degrees(uint16_t ui16tempResults);
 void adt74x0_power_down(void);
 void adt74x0_power_up(void);
 HAL_StatusTypeDef adt74x0_reset(I2C_HandleTypeDef *i2c);
