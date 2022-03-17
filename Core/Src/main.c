@@ -75,7 +75,7 @@ int __io_putchar(int ch) {
  */
 int main(void) {
 	/* USER CODE BEGIN 1 */
-	uint8_t chip_id[1];
+	uint8_t chip_id;
 	uint8_t temp_data[2];
 	long temp_raw;
 	float tempC;
@@ -106,17 +106,16 @@ int main(void) {
 	MX_I2C1_Init();
 	/* USER CODE BEGIN 2 */
 
-	if (adt74x0_reset(&hi2c1) != HAL_OK) {
-		Error_Handler();
-	}
-
 	if (HAL_I2C_IsDeviceReady(&hi2c1, ADT74x0_ADDRESS, 2, HAL_MAX_DELAY)
 			!= HAL_OK) {
 		Error_Handler();
 	}
 
-	if (HAL_I2C_Mem_Read(&hi2c1, ADT7410_ADDR, ID_REG, 1, chip_id, 1,
-			HAL_MAX_DELAY) != HAL_OK) {
+	if (adt74x0_init(&hi2c1) != HAL_OK) {
+		Error_Handler();
+	}
+
+	if(adt74x0_read_chip_id(&hi2c1, &chip_id) != HAL_OK){
 		Error_Handler();
 	}
 

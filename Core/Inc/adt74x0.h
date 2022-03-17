@@ -33,6 +33,7 @@
 
 /* ADT4x0 I2C address */
 #define ADT74x0_ADDRESS				(0x48 << 1)
+#define CHIP_ID						0xCB
 
 #define HIGH						1
 #define LOW							0
@@ -69,12 +70,9 @@ extern uint8_t ui8config;
 
 /************** Function Declarations ***********/
 
-void adt74x0_init(void);
+HAL_StatusTypeDef adt74x0_init(I2C_HandleTypeDef *i2c);
+HAL_StatusTypeDef adt74x0_read_chip_id(I2C_HandleTypeDef *i2c, uint8_t *chip_id);
 uint16_t adt74x0_read_temp(void);
-uint8_t adt74x0_read_reg(I2C_HandleTypeDef *hi2c, uint8_t reg_address);
-uint16_t adt74x0_read_two_reg(uint8_t reg_address);
-void adt74x0_write_one_reg(uint8_t reg_address, uint8_t data);
-void adt74x0_write_two_reg(uint8_t reg_address, uint8_t data1, uint8_t data2);
 uint16_t adt74x0_convert_degress_to_hex(int16_t degrees);
 float adt74x0_convert_hex_to_degrees(uint16_t temp_data);
 void adt74x0_power_down(void);
